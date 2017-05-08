@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import edu.co.sergio.mundo.vo.Departamento;
 import java.net.URISyntaxException;
+import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -70,8 +71,74 @@ public class DepartamentoDAO implements IBaseDatos<Departamento> {
 	    
 	    return departamentos;
 	}
+        
+         public  Hashtable <String,Integer> Consulta1(){
+         Hashtable <String,Integer> con1 =new Hashtable<String,Integer>(); 
+         String query = "select nom_proy, count(*) as total from  proyecto left join recurso using (id_proyecto) group by nom_proy";
+         Connection connection = null;
+         try {
+                connection = Conexion.getConnection();
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(DepartamentoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+	    try {
+	    Statement st = connection.createStatement();
+	    ResultSet rs = st.executeQuery(query);
+	    String nom_proy ="";
+            int total =0;
+	    while (rs.next()){
+	      
+	        
+	         nom_proy = rs.getString("nom_proy");
+	         total = rs.getInt("total");
+	        
+	        con1.put(nom_proy,total);
+	        
+	    }
+	    st.close();
+	    
+	    } catch (SQLException e) {
+			System.out.println("Problemas al realizar la consulta ");
+			e.printStackTrace();
+		}
+	    
+                
+        return con1;
+    }
 
-	
+	public  Hashtable <String,Integer> Consulta2(){
+         Hashtable <String,Integer> con2 =new Hashtable<String,Integer>(); 
+         String query = "select nom_depto,count(*) as Num from ((Depto natural join Proyecto) natural join DeptoProyecto )group by nom_depto";
+         Connection connection = null;
+         try {
+                connection = Conexion.getConnection();
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(DepartamentoDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+	    try {
+	    Statement st = connection.createStatement();
+	    ResultSet rs = st.executeQuery(query);
+	     String nom_depto =" ";
+             int Num=0;
+	    while (rs.next()){
+	      
+	        
+	        nom_depto = rs.getString("nom_depto");
+	         Num = rs.getInt("Num");
+	        
+	        con2.put(nom_depto,Num);
+	        
+	    }
+	    st.close();
+	    
+	    } catch (SQLException e) {
+			System.out.println("Problemas al realizar la consulta");
+			e.printStackTrace();
+		}
+	    
+                
+        return con2;
+    }
 	/**
 	 * Funcion que permite realizar la insercion de un nuevo registro en la tabla Departamento
 	 * @param Departamento recibe un objeto de tipo Departamento 
